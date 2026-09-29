@@ -128,6 +128,11 @@ term = search for exact value. Term is used with keyword field
 - should: Optional/preferred condition depending on the query context.
 - must_not: Documents matching the condition are excluded.
 
+
+# what is cluster?
+- It is group of one or more elastic nodes that work as a single system to store, search and process data.
+
+
 # What is cluster health?
 - Green: All primary and replica shards are allocated.
 - Yellow: Primary shards are allocated, but some replicas are not.
@@ -136,20 +141,51 @@ term = search for exact value. Term is used with keyword field
 
 # What would you do if Elasticsearch health is red?
 I would first identify the unassigned shards.
-
-``json  GET /_cluster/health ``
+``GET /_cluster/health``
 
 Then:
 
-`` GET /_cat/shards?v ``
+``GET /_cat/shards?v``
 
 and investigate unassigned shards using the allocation explanation API.
 - I would check:
-    Node availability
-    Disk space
-    Shard allocation rules
-    Index corruption
-    Cluster/node logs
-    Resource availability
+    - Node availability
+    - Disk space
+    - Shard allocation rules
+    - Index corruption
+    - Cluster/node logs
+    - Resource availability
 - I would avoid immediately deleting data because the root cause needs to be understood first.
 
+# What would you do if Elasticsearch disk usage is 90%?
+ I would:
+
+    - Check disk usage on all nodes.
+    - Identify the largest indices.
+    - Check Elasticsearch watermarks.
+    - Remove or archive unnecessary data according to retention policy.
+    - Apply/verify ILM policies.
+    - Add storage or nodes if required.
+    - Investigate unexpected data growth.
+    - I would not simply delete random indices in production
+ 
+ # What is ILM? 
+ - it is stands for Index Lifecycle Management.
+ - it allows you to automate index life cycle management.
+   It contains multiple phases like
+        - Hot → 
+            -- This is required phase.
+            -- it stores a latest data
+            -- user can get search result immediately
+            -- provides best indexing and search performance
+
+        - Warm → 
+        - Cold → 
+        - Delete
+   
+   
+- logs could be:
+        - 0–7 days    → Hot 
+        - 7–30 days   → Warm
+        - 30–90 days  → Cold
+        - 90+ days    → Delete
