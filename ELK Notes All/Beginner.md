@@ -136,11 +136,12 @@ term = search for exact value. Term is used with keyword field
 
 # What would you do if Elasticsearch health is red?
 I would first identify the unassigned shards.
-GET /_cluster/health
+
+``json  GET /_cluster/health ``
 
 Then:
 
-GET /_cat/shards?v
+`` GET /_cat/shards?v ``
 
 and investigate unassigned shards using the allocation explanation API.
 - I would check:
