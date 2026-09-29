@@ -169,23 +169,32 @@ and investigate unassigned shards using the allocation explanation API.
     - Investigate unexpected data growth.
     - I would not simply delete random indices in production
  
- # What is ILM? 
- - it is stands for Index Lifecycle Management.
- - it allows you to automate index life cycle management.
-   It contains multiple phases like
-        - Hot → 
-            -- This is required phase.
-            -- it stores a latest data
-            -- user can get search result immediately
-            -- provides best indexing and search performance
+# What is ILM?
+- It stands for Index Lifecycle Management.
+- It allows you to automate index life cycle management.
+- It contains multiple phases like:
 
-        - Warm → 
-        - Cold → 
-        - Delete
-   
-   
-- logs could be:
-        - 0–7 days    → Hot 
-        - 7–30 days   → Warm
-        - 30–90 days  → Cold
-        - 90+ days    → Delete
+    - Hot →
+        - This is a required phase.
+        - It stores the latest data.
+        - Users can get search results immediately.
+        - It provides the best indexing and search performance.
+
+    - Warm →
+        - It stores older data that is accessed less frequently.
+        - It provides a balance between storage cost and search performance.
+
+    - Cold →
+        - It stores older data that is rarely accessed.
+        - It is mainly used to reduce storage cost.
+
+    - Delete →
+        - It deletes the data after the defined retention period.
+
+Example:
+
+- Logs could be:
+    - 0–7 days   → Hot
+    - 7–30 days  → Warm
+    - 30–90 days → Cold
+    - 90+ days   → Delete
