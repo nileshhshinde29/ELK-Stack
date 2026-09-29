@@ -1,145 +1,39 @@
-# What is the ELK Stack?
-Elastic => to store and searches logs/events
-Logstash => to collect, process, transform, and forward the data
-Kibana => Provides Dashboards and visualization for ES data.
+# ElK questions and ans
 
-# What is Elasticsearch?
-- Elasticsearch is a distributed search and analytics engine built on Apache Lucene.
-- It stores data as JSON documents.
-- Allows fast searching, filtering, aggregation, and analysis. 
-- Used for
-    - Log management
-    - Application monitoring
-    - Full-text search
-    - Observability
-    - Security analytics
+### What is elastic search and why it is better than other?
 
-# What is a document in Elasticsearch?
-A document is a JSON object that represents a single record.
+- Elasticsearch is a tool used to store, search, and analyze large amounts of data very quickly, especially logs.
 
-# What is an index?
-- It is an collection of documents having similar data.
-- It is internally divided into shards.
+### What Is Log Analysis?
 
-# What is a shard?
-- A shard is a portion of an Elasticsearch index.
-- If an index contains a very large amount of data, Elasticsearch can distribute that data across multiple shards and nodes.
-- It allows Elasticsearch to distribute storage and search workload.
+- Process of analyzing computer generated data to extract analyze log, meaningful insights, patterns.
 
-Index
- ├── Shard 0
- ├── Shard 1
- ├── Shard 2
- └── Shard 3
+### Advantages of Elasticsearch?
 
-# What is a replica?
-- It is a copy of a primary shard.
-- Used as a backup.
--If the primary shard fails, a replica can be promoted.
+- Highly used for store, search and analyze the data very quickly, especially logs.
+- Elastic Common Schema (ECS): normalize un-consistent logs in standard formate.
+- Pri-building integration: elastic agents automatically parses data into standard formate like Apache.
+- Ingest pipeline: Native grok and Dissect processors are present to filter and structure out data.
+- use date processor to ingest pipeline to parse multiple pattern and convert into UTC
+- Data streams: ship all logs into unified streams for standardized storage and also can automatic rollover index.
+- Cross-Cluster-Search( CCS ): Enable single plane of glass visibility across multiple region without moving data
+- Can use kibana for visualize  dashboards.
+- 300+ pre-build integrations for ready to build pipelines
+- automatically manage data retention by using ILMs phases.
 
-#  What is Logstash?
-- It is a Data Processing pipeline used to collect, transform and send data to elastic search
+### What is cluster?
 
-# What are Logstash inputs, filters, and outputs?
-- Input: Defines where data comes from. eg beats, file, http
-- Filter: Processes or transforms data. eg grok, mutate, json
-- Output: Defines where data goes. eg elk, kafka
-
-# What is a Logstash pipeline?
-- A pipeline defines how Logstash receives, processes, and sends events.
-
-#  What is Kibana?
-- Kibana is a visualization and analysis interface for Elasticsearch.
-- used to create:
-        Dashboards
-        Charts
-        Tables
-        Alerts
-        Log analysis
-        Discover/search views
-
-# What is the difference between text and keyword?
-- text is analyzed and is generally used for full-text searches.
-- keyword is not analyzed and is useful for exact matching, filtering, sorting, and aggregations.
-{
-  "user.name": "Nilesh Shinde"
-   user.name.keyword: "Nilesh Shinde"
-}
-
-
-# What is Inverted index in ES?
-- Inverted index is a data structure used by Elasticsearch to make text search fast.
-- Instead of mapping documents to words, Inverted index is a structure that stores which documents contain each word,
- so Elasticsearch can find matching documents quickly
-
-- Inverted index is automatically created by Elasticsearch. We don't need to create or enable anything separately. When we store a document, Elasticsearch creates the inverted index internally so that it can search the data quickly
-
-# Difference between match and term query?
-match = search by meaning/words
-
-```json
-{
-  "query": {
-    "match": {
-      "message": "Elasticsearch fast"
-    }
-  }
-}
-
-```
-term = search for exact value. Term is used with keyword field
-
-```json
-{
-  "query": {
-    "term": {
-      "status": 500
-    }
-  }
-}
-
-```
-
-# What is Elasticsearch mapping?
-- Mapping defines how fields in Elasticsearch documents are stored and indexed.
-```json
-{
-  "properties": {
-    "username": {
-      "type": "keyword"
-    },
-   }
-}
-```
-
-# 15. What is dynamic mapping?
-- Automatically detect and create mappings for new fields.
-```json
-{
-  "name": "John",
-  "age": 30
-}s
-```
-- it can automatically create mappings for name and age.
-
-# What are must, should, filter, and must_not?
-- must: Condition must match and contributes to scoring.
-- filter: Condition must match but is used for filtering rather than relevance scoring.
-- should: Optional/preferred condition depending on the query context.
-- must_not: Documents matching the condition are excluded.
-
-
-# what is cluster?
 - It is group of one or more elastic nodes that work as a single system to store, search and process data.
 
+### What is cluster health?
 
-# What is cluster health?
 - Green: All primary and replica shards are allocated.
 - Yellow: Primary shards are allocated, but some replicas are not.
 - Red: One or more primary shards are unavailable.
 - ``json GET /_cluster/health ``
 
-# What would you do if Elasticsearch health is red?
+### What would you do if Elasticsearch health is red?
+
 I would first identify the unassigned shards.
 ``GET /_cluster/health``
 
@@ -148,53 +42,44 @@ Then:
 ``GET /_cat/shards?v``
 
 and investigate unassigned shards using the allocation explanation API.
+
 - I would check:
-    - Node availability
-    - Disk space
-    - Shard allocation rules
-    - Index corruption
-    - Cluster/node logs
-    - Resource availability
+  - Node availability
+  - Disk space
+  - Shard allocation rules
+  - Index corruption
+  - Cluster/node logs
+  - Resource availability
 - I would avoid immediately deleting data because the root cause needs to be understood first.
 
-# What would you do if Elasticsearch disk usage is 90%?
- I would:
+### What is xpack.security.enabled: true?
 
-    - Check disk usage on all nodes.
-    - Identify the largest indices.
-    - Check Elasticsearch watermarks.
-    - Remove or archive unnecessary data according to retention policy.
-    - Apply/verify ILM policies.
-    - Add storage or nodes if required.
-    - Investigate unexpected data growth.
-    - I would not simply delete random indices in production
- 
-# What is ILM?
-- It stands for Index Lifecycle Management.
-- It allows you to automate index life cycle management.
-- It contains multiple phases like:
+- If its true then we need to credentials while login in elk.
 
-    - Hot →
-        - This is a required phase.
-        - It stores the latest data.
-        - Users can get search results immediately.
-        - It provides the best indexing and search performance.
+### What is xpack.security.enrollment.enabled: true?
 
-    - Warm →
-        - It stores older data that is accessed less frequently.
-        - It provides a balance between storage cost and search performance.
+- Enables easy and secure enrollment of Elastic components. like Kibana
 
-    - Cold →
-        - It stores older data that is rarely accessed.
-        - It is mainly used to reduce storage cost.
+### What is TLS and SSL?
+- **TLS** stands for **Transport Layer Security**.
+- **SSL** stands for **Secure Sockets Layer**.
+- SSL is the older security protocol, while TLS is its newer and more secure replacement.
+- In Elasticsearch, TLS is mainly used to **secure and encrypt communication** between Elasticsearch components and clients.
 
-    - Delete →
-        - It deletes the data after the defined retention period.
+- TLS helps protect:
+    - Username and password
+    - Elasticsearch data
+    - API requests and responses
+    - Communication between Elasticsearch nodes
 
-Example:
+### What is Transport SSL?
+- Transport SSL is used specifically to **secure communication between Elasticsearch nodes**.
+- Elasticsearch nodes use TLS/SSL to encrypt their communication with each other.
+- It helps provide:
+    - Encryption
+    - Authentication
+    - Data integrity
 
-- Logs could be:
-    - 0–7 days   → Hot
-    - 7–30 days  → Warm
-    - 30–90 days → Cold
-    - 90+ days   → Delete
+- Example:
+    Node 1 → **TLS/SSL** → Node 2
+
