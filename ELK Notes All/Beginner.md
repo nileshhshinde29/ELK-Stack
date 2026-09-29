@@ -82,4 +82,26 @@ and investigate unassigned shards using the allocation explanation API.
 
 - Example:
     Node 1 → **TLS/SSL** → Node 2
+---
+
+```json
+
+xpack.security.transport.ssl:
+
+  enabled: true
+  verification_mode: none
+  keystore.path: certs/transport.p12   // it contains security key
+  truststore.path: certs/transport.p12   // it contains security path
+
+cluster.initial_master_nodes: ["node-1"]     // it defines initial master node
+
+```
+
+### What is the security layers in ES
+-- user security = usename and password :  xpack.security.enabled
+-- client security(HTTP SSL) : ssl/tls
+-- cluster security=> node to node : transport ssl  
+
+## Xms and xmx
+in side es => config => Jvm.option there is option for assign memory for JVM. always recommended to use half of ram and max 32gb. 
 
